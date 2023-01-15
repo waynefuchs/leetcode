@@ -3,41 +3,46 @@
  * @return {number}
  */
 var myAtoi = function (s) {
+  let index = 0;
   let positive = true;
-  // Clean input
-  // Remove Spaces
-  let arr = s.split("").filter((v) => v != " ");
-  // Check whether negative or positive
-  for (let i = 0; i < arr.length; i++) {
-    // Checking 1-9, ignoring leading 0's (48)
-    if (arr[i].charCodeAt(i) >= 49 && arr[i].charCodeAt(0) <= 57) break;
-    if (arr[i] === "-") {
-      positive = false;
-      break;
-    }
-  }
-  // Remove everything but numbers
-  arr = arr.filter((v) => v.charCodeAt(0) >= 48 && v.charCodeAt(0) <= 57);
-  // Remove leading 0's
-  while (arr[0] === "0") arr.shift();
-
-  // +2147483648
-  // -2147483648
-  // Quickly clamp numbers that are far out of bounds (-2^31 -> 2^31)
-  if (arr.length > 10) return positive ? 2147483648 : -2147483648;
-
-  // calculate value
+  let digitArray = [];
   let result = 0;
-  for (let i = arr.length - 1, p = 0; i >= 0; i--, p++) {
-    result += (arr[i].charCodeAt(0) - 48) * 10 ** p;
+
+  // 1. Read in and ignore any leading whitespace.
+  s = s.trim();
+
+  // 2. Check if the next character (if not already at the end of the string) is '-' or '+'.
+  //    Read this character in if it is either.
+  //    This determines if the final result is negative or positive respectively.
+  //    Assume the result is positive if neither is present.
+  if (s[index] === "-" || s[index] === "+") {
+    positive = s[index] !== "-";
+    index++;
   }
 
-  // Do a second check to clamp the out of bounds
+  // 3. Read in next the characters until the next non-digit character or the end of the input is reached.
+  //    The rest of the string is ignored.
+  for (; index < s.length; index++) {
+    const code = s.charCodeAt(index);
+    if (code < 48 || code > 57) break;
+    digitArray.unshift(code - 48);
+  }
+
+  // 4. Convert these digits into an integer (i.e. "123" -> 123, "0032" -> 32).
+  //    If no digits were read, then the integer is 0.
+  //    Change the sign as necessary (from step 2).
+  for (let power = 0; power < digitArray.length; power++) {
+    result += digitArray[power] * 10 ** power;
+  }
+
+  // 5. If the integer is out of the 32-bit signed integer range [-231, 231 - 1], then clamp the integer so that it remains in the range.
+  //    Specifically, integers less than -2^31 should be clamped to -2^31, and integers greater than 231 - 1 should be clamped to 231 - 1.
   if (result > 2147483648) return positive ? 2147483648 : -2147483648;
 
-  // return the result
+  // 6. Return the integer as the final result.
+  if (result === 0) return 0;
   return positive ? result : -result;
 };
 
-n = myAtoi("  lol -             43 with words!");
+n = myAtoi("                43 with words!");
 console.log(n);
