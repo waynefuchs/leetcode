@@ -8,7 +8,7 @@ var myAtoi = function (s) {
   let result = 0;
 
   // 1. Read in and ignore any leading whitespace.
-  s = s.trim();
+  for (; index < s.length && s[index] === " "; index++) {}
 
   // 2. Check if the next character (if not already at the end of the string) is '-' or '+'.
   //    Read this character in if it is either.
