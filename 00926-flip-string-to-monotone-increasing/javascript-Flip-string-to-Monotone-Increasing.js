@@ -1,13 +1,17 @@
+// Speed: 	> 86.36%
+// Memory:	> 97.73
+
 /**
  * @param {string} s
  * @return {number}
  */
 var minFlipsMonoIncr = function (s) {
-  let m = s.split("").filter((v) => v === "0").length;
+  let m = 0;
+  for(let i = 0; i < s.length; i++) if(s[i] === "0") m++;
   let ans = m;
   for (const c of s) {
     if (c === "0") ans = Math.min(ans, --m);
-    else ++m;
+    else m++;
   }
   return ans;
 };
