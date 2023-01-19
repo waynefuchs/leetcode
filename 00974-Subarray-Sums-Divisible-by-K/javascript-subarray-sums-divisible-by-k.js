@@ -4,15 +4,18 @@
  * @return {number}
  */
 var subarraysDivByK = function (nums, k) {
-  let prefixSums = [...new Array(k)].map((v) => 0);
-  prefixSums[0] = 1;
+  // Generate result array and preload values
+  const modResult = new Array(k);
+  for (let i = 1; i < k; i++) modResult[i] = 0;
+  modResult[0] = 1;
+
+  // Calculate prefix sum and answer
   let sum = 0;
   let answer = 0;
-  for (const n of nums) {
+  for (n of nums) {
     sum += n;
     const index = ((sum % k) + k) % k;
-    answer += prefixSums[index];
-    prefixSums[index]++;
+    answer += modResult[index]++;
   }
   return answer;
 };
@@ -30,22 +33,18 @@ k = 5;
 result = subarraysDivByK(nums, k);
 console.log(`result: ${result}`);
 
-/*
-input:  4,  5,  0,  -2, -3, 1
-sum     4   9   9   7   4   5
-sum%k   4   4   4   2   4   0
-
-formula: (i*(i-1))/2
-index   0 1 2 3 4   <-- "i" for index / remainder
-count[] 1 0 1 0 4   <-- "c" for count
-formula 0 0 1 0 6
-sum of formula: 7
-*/
-
 // Example 2:
 // Input: nums = [5], k = 9
 // Output: 0
 nums = [5];
 k = 9;
+result = subarraysDivByK(nums, k);
+console.log(`result: ${result}`);
+
+// Example 3:
+// Input: nums = [1,2,3,4,5], k = 3
+// Output: 7
+nums = [1, 2, 3, 4, 5];
+k = 3;
 result = subarraysDivByK(nums, k);
 console.log(`result: ${result}`);

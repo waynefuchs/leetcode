@@ -3,6 +3,7 @@
  * @param {number[]} nums
  * @return {number}
  */
+Number.NEGATIVE_INFINITY;
 var maxSubarraySumCircular = function (nums) {
   var curMax = 0;
   var curMin = 0;
@@ -31,6 +32,9 @@ let result;
 // Explanation: Subarray [3] has maximum sum 3.
 nums = [1, -2, 3, -2];
 result = maxSubarraySumCircular(nums);
+console.log(result);
+
+result = kadane(nums);
 console.log(result);
 
 // Example 2:
