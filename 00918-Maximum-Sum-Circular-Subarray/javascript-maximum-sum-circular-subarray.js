@@ -1,32 +1,26 @@
+// Modified Kadane's Algorithm
 /**
  * @param {number[]} nums
  * @return {number}
  */
 var maxSubarraySumCircular = function (nums) {
-  // Kadane's Algorithm
-  const kadane = (numberArray) => {
-    let maxSum = Number.NEGATIVE_INFINITY;
-    let currentSum = 0;
-    for (const num of numberArray) {
-      currentSum = Math.max(0, currentSum + num);
-      maxSum = Math.max(currentSum, maxSum);
-    }
-    return maxSum;
-  };
+  var curMax = 0;
+  var curMin = 0;
+  var sum = 0;
+  var maxSum = nums[0];
+  var minSum = nums[0];
 
-  // check if all numbers are negative, return maximum value if that is the case
-  const maxValue = Math.max(...nums);
-  if (maxValue < 0) return maxValue;
+  for (i of nums) {
+    curMax = Math.max(curMax, 0) + i;
+    maxSum = Math.max(maxSum, curMax);
 
-  // Brute Force
-  let maxSum = Number.NEGATIVE_INFINITY;
-  for (let index = 0; index < nums.length; index++) {
-    maxSum = Math.max(kadane(nums), maxSum);
-    v = nums.shift();
-    nums.push(v);
+    curMin = Math.min(curMin, 0) + i;
+    minSum = Math.min(minSum, curMin);
+
+    sum += i;
   }
 
-  return maxSum;
+  return sum == minSum ? maxSum : Math.max(maxSum, sum - minSum);
 };
 
 let nums;
