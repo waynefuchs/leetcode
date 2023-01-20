@@ -4,18 +4,16 @@
  * @return {number}
  */
 var subarraysDivByK = function (nums, k) {
-  // Generate result array and preload values
-  const modResult = new Array(k);
-  for (let i = 1; i < k; i++) modResult[i] = 0;
-  modResult[0] = 1;
+  const modSums = new Array(k);
+  for (let i = 1; i < k; i++) modSums[i] = 0;
+  modSums[0] = 1;
 
-  // Calculate prefix sum and answer
   let sum = 0;
   let answer = 0;
   for (n of nums) {
     sum += n;
-    const index = ((sum % k) + k) % k;
-    answer += modResult[index]++;
+    index = ((sum % k) + k) % k;
+    answer += modSums[index]++;
   }
   return answer;
 };
