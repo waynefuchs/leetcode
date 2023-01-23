@@ -4,23 +4,18 @@
  * @return {number}
  */
 var findJudge = function (n, trust) {
-  // Initialize Trust
-  // For the cost of the memory of an additional Number,
-  //    'off by one' calculations are not necessary
-  const trustCount = new Array(n + 1);
+  // initialize the trustcount array
+  const trustCount = new Array(n + 1); /// [0, 1 ... n]
   for (let i = 1; i <= n; i++) trustCount[i] = 0;
 
-  // Build Trust Result
+  // populate count
   for (const [truster, trustee] of trust) {
-    // this decriment ensures that:
-    //    if a person trusts another, the final check below will fail
-    trustCount[truster]--;
     trustCount[trustee]++;
+    trustCount[truster]--;
   }
 
-  // check if both conditions are met and the judge exists in this graph-link array
-  for (let person = 1; person <= n; person++)
-    if (trustCount[person] === n - 1) return person;
+  // check for the judge
+  for (let i = 1; i <= n; i++) if (trustCount[i] === n - 1) return i;
   return -1;
 };
 
