@@ -4,33 +4,24 @@
  * @return {number}
  */
 var findJudge = function (n, trust) {
-  // Initialize the graph
-  const trustGraph = new Map();
-  for (let i = 1; i <= n; i++) {
-    const person = new Map();
-    person.set("trusts", new Set());
-    person.set("trustedBy", new Set());
-    trustGraph.set(i, person);
+  // Initialize Trust
+  // For the cost of the memory of an additional Number,
+  //    'off by one' calculations are not necessary
+  const trustCount = new Array(n + 1);
+  for (let i = 1; i <= n; i++) trustCount[i] = 0;
+
+  // Build Trust Result
+  for (const [truster, trustee] of trust) {
+    // this decriment ensures that:
+    //    if a person trusts another, the final check below will fail
+    trustCount[truster]--;
+    trustCount[trustee]++;
   }
 
-  // Building the graph
-  for (const link of trust) {
-    trustGraph.get(link[0]).get("trusts").add(link[1]);
-    trustGraph.get(link[1]).get("trustedBy").add(link[0]);
-  }
-
-  // Find the judge, if one exists
-  const nKeys = [...trustGraph.keys()];
-  const judge = nKeys.filter(
-    (key) => trustGraph.get(key).get("trusts").size === 0
-  );
-  if (judge.length !== 1) return -1;
-
-  const potentialJudgeTrustedBy = trustGraph.get(judge[0]).get("trustedBy");
-  return potentialJudgeTrustedBy.size === n - 1 &&
-    !potentialJudgeTrustedBy.has(judge[0])
-    ? judge[0]
-    : -1;
+  // check if both conditions are met and the judge exists in this graph-link array
+  for (let person = 1; person <= n; person++)
+    if (trustCount[person] === n - 1) return person;
+  return -1;
 };
 
 let n;
