@@ -5,37 +5,49 @@
  * @return {number}
  */
 var closestMeetingNode = function (edges, node1, node2) {
-  let n = edges.length;
-  let map1 = new Array(n);
-  let map2 = new Array(n);
-  for (let i = 0; i < n; i++) {
-    map1[i] = -1;
-    map2[i] = -1;
+  const route1 = new Array(edges.length);
+  const route2 = new Array(edges.length);
+  for (let i = 0; i < edges.length; i++) {
+    route1[i] = -1;
+    route2[i] = -1;
   }
-  map1[node1] = 0;
-  map2[node2] = 0;
+  route1[node1] = 0;
+  route2[node2] = 0;
 
-  while (edges[node1] != -1 && map1[edges[node1]] == -1) {
-    map1[edges[node1]] = map1[node1] + 1;
-    node1 = edges[node1];
-  }
-
-  while (edges[node2] != -1 && map2[edges[node2]] == -1) {
-    map2[edges[node2]] = map2[node2] + 1;
-    node2 = edges[node2];
+  // prettier-ignore
+  while(edges[node1] !== -1             // this node is not a leaf node
+    && route1[edges[node1]] === -1) {   // && have not visited before (cycle)
+    // set the map array value of the next edge equal to the current count + 1
+    route1[edges[node1]] = route1[node1] + 1;
+    // move the node position to the next node for the next iteration
+    node1 = edges[node1] 
   }
 
-  let result = n;
-  let node = -1;
-  for (let i = 0; i < n; i++) {
-    if (map1[i] == -1 || map2[i] == -1) continue;
-    let val = Math.max(map1[i], map2[i]);
-    if (result > val) {
-      result = val;
-      node = i;
+  // Repeat for node 2
+  // prettier-ignore
+  while(edges[node2] !== -1
+    && route2[edges[node2]] === -1) {
+    route2[edges[node2]] = route2[node2] + 1;
+    node2 = edges[node2] 
+  }
+
+  // iterate over routes
+  let maximum = edges.length;
+  let index = -1;
+  for (let i = 0; i < edges.length; i++) {
+    // skip unvisited pairs
+    if (route1[i] === -1 || route2[i] === -1) continue;
+    // get maximum value between distances (node1->center && node2->center)
+    const value = Math.max(route1[i], route2[i]);
+    if (value < maximum) {
+      // value is the minimum of maximums, set return data
+      maximum = value;
+      index = i;
     }
   }
-  return node;
+
+  // result
+  return index;
 };
 
 let input;
