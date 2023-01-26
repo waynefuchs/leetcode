@@ -2,70 +2,31 @@
  * @param {number[][]} board
  * @return {number}
  */
-var indexConversion = (n, index) => {
-  const row = (n - index / n) | 0;
-
-  // prettier-ignore
-  const leftToRight = row % 2 
-    ? (n - 1) - (n ** 2 - row * n - index) 
-    : n ** 2 - row * n - index;
-  // prettier-ignore
-  const col = n % 2 
-    ? (n - 1) - leftToRight 
-    : leftToRight
-  return [row, col];
-};
-
-// DEBUG
-// const n = 5;
-// let index = 1;
-// let res = [];
-// for (let x = 0; x < n; x++) {
-//   let tmp = [];
-//   for (let y = 0; y < n; y++, index++) {
-//     let [row, col] = indexConversion(n, index);
-//     tmp.push(`${index}>${row}:${col}`);
-//   }
-//   if (x % 2) tmp.reverse();
-//   res.unshift([...tmp]);
-// }
-// console.dir(res);
-
 var snakesAndLadders = function (board) {
-  // initialize and load board into array
-  const boardSize = board.length ** 2 + 1;
-  let distances = new Array(boardSize);
-  const stack = [1];
-  distances[0] = null;
-  distances[1] = 0;
-
-  // calculate minimum distance for each square
-  while (stack.length) {
-    let indexCurrent = stack.pop();
-    let moves = distances[indexCurrent] + 1;
-
-    const indexStart = indexCurrent + 1;
-    const indexEnd = Math.min(indexCurrent + 6, boardSize);
-    for (let i = indexStart; i <= indexEnd; i++) {
-      const [row, col] = indexConversion(board.length, i);
-      const index = board[row][col] !== -1 ? board[row][col] : i;
-      if (!distances[index] || moves < distances[index]) {
-        distances[index] = moves;
-        stack.push(index);
+  let n = board.length;
+  let set = new Set();
+  let indexConversion = (index) => {
+    let row = ((index - 1) / n) | 0;
+    let col = (index - 1) % n;
+    col = row % 2 == 1 ? n - 1 - col : col;
+    row = n - 1 - row;
+    return [row, col];
+  };
+  let q = [[1, 0]];
+  while (q.length > 0) {
+    const [pos, moves] = q.shift();
+    for (let i = 1; i < 7; i++) {
+      let newPos = i + pos;
+      let [r, c] = indexConversion(newPos);
+      if (board[r][c] != -1) newPos = board[r][c];
+      if (newPos == n * n) return moves + 1;
+      if (!set.has(newPos)) {
+        set.add(newPos);
+        q.push([newPos, moves + 1]);
       }
     }
   }
-
-  let temp = [...distances];
-  for (let i = 0; i < board.length; i++) {
-    const out = temp.slice(temp.length - board.length);
-    console.log(out);
-    temp = temp.slice(0, temp.length - board.length);
-  }
-
-  // return result
-  // const result = distances[boardSize - 1];
-  return distances[boardSize - 1];
+  return -1;
 };
 
 let board;
